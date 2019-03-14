@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"net/url"
 )
@@ -28,5 +29,6 @@ func main() {
 
 	// subscribe & log
 	go SubscribeAndLog(uriStr, *topic, *file)
+	fmt.Printf("\nLogging \"mqtt://%s:%s/%s\" to \"%s\" ...\n", *host, *port, *topic, *file)
 	select {}
 }

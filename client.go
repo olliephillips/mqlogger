@@ -33,7 +33,6 @@ func SubscribeAndLog(uri *url.URL, topic string, file string) {
 		if _, err := f.Write(output); err != nil {
 			log.Fatal("problem writing to file:", err)
 		}
-		fmt.Printf("* [%s] %s\n", msg.Topic(), string(msg.Payload()))
 	})
 }
 
