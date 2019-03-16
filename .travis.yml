@@ -1,0 +1,30 @@
+language: go
+go:
+  - 1.11
+gobuild_args: --ldflags "-X \"main.VERSION=$TRAVIS_TAG commit $TRAVIS_COMMIT\""
+
+before_deploy:
+  - mkdir release
+  - cp README.md README.txt
+  - 'GOARCH=amd64 GOOS=darwin go build --ldflags "-X \"main.VERSION=$TRAVIS_TAG commit $TRAVIS_COMMIT os=darwin-amd64\"" -o mqlogger && tar -zcf release/mqlogger-darwin-amd64.tar.gz mqlogger README.txt'
+  - 'GOARCH=amd64 GOOS=linux go build --ldflags "-X \"main.VERSION=$TRAVIS_TAG commit $TRAVIS_COMMIT os=linux-amd64\"" -o mqlogger && tar -zcf release/mqlogger-linux-amd64.tar.gz mqlogger README.txt'
+  - unix2dos -n README.md README.txt
+  - 'GOARCH=amd64 GOOS=windows go build --ldflags "-X \"main.VERSION=$TRAVIS_TAG commit $TRAVIS_COMMIT os=windows-amd64\"" -o mqlogger.exe && zip release/mqlogger-windows-amd64.zip mqlogger.exe README.txt'
+
+addons:
+  apt:
+    packages:
+      - dos2unix
+
+deploy:
+  skip_cleanup: true
+  tags: true
+  provider: releases
+  on:
+    repo: olliephillips/mqlogger
+    tags: true
+  api_key: $GITHUB_TOKEN
+  file:
+    - "release/mqlogger-darwin-amd64.tar.gz"
+    - "release/mqlogger-linux-amd64.tar.gz"
+    - "release/mqlogger-windows-amd64.zip"
